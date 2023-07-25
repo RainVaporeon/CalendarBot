@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.spiritlight.calendarbot.Main;
 import com.spiritlight.calendarbot.utils.Frequency;
 
+import java.util.Date;
 import java.util.Objects;
 
 public final class TimeEvent {
@@ -18,11 +19,15 @@ public final class TimeEvent {
     @JsonProperty
     private final int id;
 
+    @JsonProperty
+    private Date lastFiredAt;
+
     private TimeEvent() {
         this.title = null;
         this.description = null;
         this.time = null;
         this.id = Integer.MIN_VALUE;
+        this.lastFiredAt = null;
     }
 
     private TimeEvent(String title, String description, Time time, int id) {
@@ -30,6 +35,7 @@ public final class TimeEvent {
         this.description = description;
         this.time = time;
         this.id = id;
+        this.lastFiredAt = null;
     }
 
     public TimeEvent(String title, String description, Time time) {
@@ -76,8 +82,10 @@ public final class TimeEvent {
         return isPast(Time.now(), tolerance);
     }
 
+    private static final int WEEK_TIME = 604800000;
     @JsonIgnore
     public boolean isPast(Time t, long tolerance) {
+        if(this.lastFiredAt != null && (this.lastFiredAt.getTime() - WEEK_TIME - tolerance) < System.currentTimeMillis()) return false;
         return (time.compareTo(t) - tolerance / 1000) < 0;
     }
 
