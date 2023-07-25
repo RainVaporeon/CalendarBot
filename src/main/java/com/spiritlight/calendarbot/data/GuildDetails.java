@@ -90,8 +90,13 @@ public class GuildDetails {
         return collect;
     }
 
+    private void recache() {
+        this.cachedTextChannel = Main.bot.getJDA().getTextChannelById(this.announcementChannel);
+    }
+
     public void onUpdate() {
         final Logger logger = Loggers.getThreadLogger();
+        this.recache();
         events.forEach(event -> {
             if(!event.isPast()) return; // no-op
 
@@ -102,6 +107,8 @@ public class GuildDetails {
 
             this.cachedTextChannel.sendMessage(event.title()).addEmbeds(getEmbed(event)).queue(m -> {
                 logger.success("Successfully dispatched event to " + this.guildId);
+            }, t -> {
+                logger.error("Failed to dispatch message to " + this.announcementChannel + ": ", t);
             });
             if(event.time().frequency() != Frequency.EVERY)
                 events.remove(event);

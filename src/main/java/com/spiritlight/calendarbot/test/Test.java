@@ -1,37 +1,22 @@
 package com.spiritlight.calendarbot.test;
 
-import com.spiritlight.fishutils.misc.Option;
+import com.spiritlight.calendarbot.time.Time;
+import com.spiritlight.calendarbot.utils.Weekday;
 
 public class Test {
 
     public static void main(String[] args) {
-        Option.register("test", true);
-        Option.register("int", 10);
-        Option.register("double", 10.0);
-        Option.register("string", "value");
+        Time time = Time.once(Weekday.SUNDAY, 12, 0, 50);
+        Time later = Time.once(Weekday.SUNDAY, 18, 30, 0);
+        Time earlier = Time.once(Weekday.SUNDAY, 6, 30, 0);
 
-        Test.acceptBoolean(Option.auto("test"));
-
-        Test.acceptInt(Option.auto("int"));
-
-        Test.acceptDouble(Option.auto("double"));
-
-        Test.acceptString(Option.auto("string"));
+        System.out.printf("""
+                OUT:
+                time vs later: before=%s
+                time vs earlier: before=%s
+                """,
+                time.before(later),
+                time.before(earlier));
     }
 
-    private static void acceptBoolean(boolean b) {
-        System.out.println(b);
-    }
-
-    private static void acceptInt(int i) {
-        System.out.println(i);
-    }
-
-    private static void acceptDouble(double d) {
-        System.out.println(d);
-    }
-
-    private static void acceptString(String s) {
-        System.out.println(s);
-    }
 }
